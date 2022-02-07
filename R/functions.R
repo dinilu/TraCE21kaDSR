@@ -1,12 +1,22 @@
-calBP.years <- c(-22000:-1,1:150)
-calendar.years <- c(-20050:-1,1:2100)
 
 elementwise.all.equal <- Vectorize(function(x, y) {isTRUE(all.equal(x, y))})
 
+#' Get vertical levels in a grid.
+#'
+#' @param grid Grid object (see loadeR package) from which to get the levels
+#' @param level Level to be found within the levels in the grid object
+#'
+#' @return List object with two vectors inside: 
+#' # level: the level searched.
+#' # zRange: the position for the level.
+#' @export
+#'
+#' @examples
+#' TBW
 getVerticalLevelPars <- function (grid, level) {
   gcs <- grid$getCoordinateSystem()
   if (gcs$hasVerticalAxis()) {
-    levels <- scanVarDimensions(grid)$level$Values
+    levels <- loadeR::scanVarDimensions(grid)$level$Values
     if (is.null(level)) {
       if (length(levels) == 1) {
         level <- levels
@@ -36,7 +46,7 @@ getVerticalLevelPars <- function (grid, level) {
   return(list(level = level, zRange = zRange))
 }
 
-assignInNamespace("getVerticalLevelPars", getVerticalLevelPars, ns="loadeR")
+utils::assignInNamespace("getVerticalLevelPars", getVerticalLevelPars, ns="loadeR")
 
 
 copyXYCoords <- function(x, y){
@@ -46,10 +56,10 @@ copyXYCoords <- function(x, y){
 
 compute_wind_speed <- function(u, v) { 
   message("[", Sys.time(), "] Computing wind speed (wss) from its horizontal (u) and vertical (v) components")
-  u <- gridArithmetics(u, u, operator="*")
-  v <- gridArithmetics(v, v, operator="*")
+  u <- transformeR::gridArithmetics(u, u, operator="*")
+  v <- transformeR::gridArithmetics(v, v, operator="*")
   
-  ws <- gridArithmetics(u, v, operator="+")
+  ws <- transformeR::gridArithmetics(u, v, operator="+")
   
   ws$Data <- round(sqrt(ws$Data), 1)
   ws$Variable$varName <- "wss"
@@ -77,7 +87,7 @@ loadTraceData <- function(file, var=NULL, lonLim=trace.lon, latLim=trace.lat, st
   if(is.null(var)){
     stop("Argument var not defined. Please define a variable to be loaded.")
   }
-  data <- loadGridData(dataset = file,
+  data <- loadeR::loadGridData(dataset = file,
                                var = var,
                                lonLim = lonLim,
                                latLim = latLim, 
@@ -85,7 +95,7 @@ loadTraceData <- function(file, var=NULL, lonLim=trace.lon, latLim=trace.lat, st
   data$Dates$start <- paste(DateSeq(start_date, end_date, 12, 0), "00:00:00 GMT", sep = " ")
   data$Dates$end <- paste(DateSeq(start_date, end_date, 12, 1), "00:00:00 GMT", sep = " ")
   
-  data <- subsetGrid(data, years=years)  
+  data <- transformeR::subsetGrid(data, years=years)  
   
   return(data)
 }
@@ -100,8 +110,8 @@ loadTrace <- function(file_list, var_list, lonLim=trace.lon, latLim=trace.lat, s
     data$wss <- compute_wind_speed(data$'u@992.5561', data$'v@992.5561')
   } 
   
-  data <- makeMultiGrid(data)
-  data <- subsetGrid(data, var=var_selection)
+  data <- transformeR::makeMultiGrid(data)
+  data <- transformeR::subsetGrid(data, var=var_selection)
   
   return(data)
 } 
@@ -130,7 +140,7 @@ loadCMIP <- function(var_list, var_new_list, indir = "../../Data/CMIP5/", rcp, m
   
   file_list <- paste0(indir, rcp, "/", mod, "_", rcp_folder, "/", var_list, "_Amon_", mod, "_", rcp_file, "_r1i1p1_", dates, ".nc")
   
-  data <- mapply(loadGridData, dataset = file_list, var = var_new_list, MoreArgs=list(lonLim = lonLim, latLim = latLim, dictionary = dictionary), SIMPLIFY = FALSE)
+  data <- mapply(loadeR::loadGridData, dataset = file_list, var = var_new_list, MoreArgs=list(lonLim = lonLim, latLim = latLim, dictionary = dictionary), SIMPLIFY = FALSE)
 
   start_date <- paste0(years[[1]], "-01-01")
   end_date <- paste0(years[[length(years)]], "-12-31")
@@ -139,10 +149,10 @@ loadCMIP <- function(var_list, var_new_list, indir = "../../Data/CMIP5/", rcp, m
   
   names(data) <- var_new_list
   
-  data <- makeMultiGrid(data)
+  data <- transformeR::makeMultiGrid(data)
   
   if(!is.null(years)){
-    data <- subsetGrid(data, years = years)
+    data <- transformeR::subsetGrid(data, years = years)
   } 
   
   return(data)
@@ -160,12 +170,12 @@ modifyDates <- function(x, start_date="1961-01-01", end_date="1990-12-31") {
 
 loadUerra <- function(file, var, lonLim = uerra.lon, latLim = uerra.lat, dictionary = "../../Data/UERRA/UERRA_dictionary.dic", new.coordinates){
   
-  data <- loadGridData(file, var = var, lonLim = lonLim, latLim = latLim, dictionary = dictionary)
+  data <- loadeR::loadGridData(file, var = var, lonLim = lonLim, latLim = latLim, dictionary = dictionary)
   
   if(var == "pr"){
-    data <- upscaleGrid(data, times=2, aggr.fun=list(FUN=mean))
+    data <- transformeR::upscaleGrid(data, times=2, aggr.fun=list(FUN=mean))
     
-    data <- interpGrid(data, new.coordinates = new.coordinates, method="bilinear")
+    data <- transformeR::interpGrid(data, new.coordinates = new.coordinates, method="bilinear")
   }
   
   data <- modifyDates(data)
@@ -177,19 +187,19 @@ loadUerra <- function(file, var, lonLim = uerra.lon, latLim = uerra.lat, diction
 
 loadManualTraceData <- function(file, var, trace.y1, trace.y2, lonLim = trace.lon, latLim = trace.lat, dictionary="../../Data/Trace21ka/dictionary.dic"){ 
   
-  var <- findVerticalLevel(var)
+  var <- loadeR::findVerticalLevel(var)
   
   dic <- loadeR:::dictionaryLookup(dictionary, var$var, "none")
-  vocabulary <- C4R.vocabulary()
+  vocabulary <- climate4R.UDG::C4R.vocabulary()
 
-  trace.nc <- nc_open(file)
+  trace.nc <- ncdf4::nc_open(file)
 
-  long_name <- ncatt_get(trace.nc, dic$short_name)$long_name
+  long_name <- ncdf4::ncatt_get(trace.nc, dic$short_name)$long_name
   
   if(!is.null(dictionary)){
     units <- as.character(vocabulary[grep(paste0("^", var$var, "$"), vocabulary$identifier), 3])
   }else{
-    units <- ncatt_get(trace.nc, dic$short_name)$units
+    units <- ncdf4::ncatt_get(trace.nc, dic$short_name)$units
   } 
   
   trace.c4r <- list()
@@ -210,21 +220,21 @@ loadManualTraceData <- function(file, var, trace.y1, trace.y2, lonLim = trace.lo
   attr(trace.c4r[[1]], "verification_time") <- "none"
   
   if(!is.null(var$level)){
-    lev <- ncvar_get(trace.nc, "lev")
+    lev <- ncdf4::ncvar_get(trace.nc, "lev")
     lev <- which(elementwise.all.equal(lev, var$level))
-    trace.var <- ncvar_get(trace.nc, dic$short_name, c(1,1,lev,1))
+    trace.var <- ncdf4::ncvar_get(trace.nc, dic$short_name, c(1,1,lev,1))
   }else{
-    trace.var <- ncvar_get(trace.nc, dic$short_name)
+    trace.var <- ncdf4::ncvar_get(trace.nc, dic$short_name)
   }  
 
   trace.c4r[[2]] <- aperm(trace.var, c(3,2,1)) * dic$scale + dic$offset
   
   trace.c4r[[3]] <- list()
   # trace.c4r[[3]]$x <- ncvar_get(trace.nc, "lon")
-  lon <- ncvar_get(trace.nc, "lon")
+  lon <- ncdf4::ncvar_get(trace.nc, "lon")
   lon[which(lon>180)] <- lon[which(lon>180)] - 360 
   trace.c4r[[3]]$x <- lon
-  trace.c4r[[3]]$y <- ncvar_get(trace.nc, "lat")
+  trace.c4r[[3]]$y <- ncdf4::ncvar_get(trace.nc, "lat")
   attr(trace.c4r[[3]], "projection") <- "LatLonProjection"
   attr(trace.c4r[[3]], "resX") <- (max(trace.c4r[[3]]$x) - min(trace.c4r[[3]]$x)) / (length(trace.c4r[[3]]$x) - 1)
   attr(trace.c4r[[3]], "resY") <- (max(trace.c4r[[3]]$y) - min(trace.c4r[[3]]$y)) / (length(trace.c4r[[3]]$y) - 1)
@@ -252,7 +262,7 @@ loadManualTraceData <- function(file, var, trace.y1, trace.y2, lonLim = trace.lo
   attr(trace.c4r, "R_package_ref") <- "https://doi.org/10.1016/j.envsoft.2018.09.009"
   
   if(!is.null(lonLim) & !is.null(latLim)){
-    trace.c4r <- subsetGrid(trace.c4r, lonLim = lonLim, latLim = latLim)
+    trace.c4r <- transformeR::subsetGrid(trace.c4r, lonLim = lonLim, latLim = latLim)
   } 
   trace.c4r <- recalcGridResolution(trace.c4r)
   
@@ -275,14 +285,14 @@ loadManualTrace <- function(file_list, var_list, trace.y1, trace.y2, lonLim, lat
     data$wss <- compute_wind_speed(data$'u@992.5561', data$'v@992.5561')
   } 
   
-  data <- makeMultiGrid(data)
-  data <- subsetGrid(data, var=var_selection)
+  data <- transformeR::makeMultiGrid(data)
+  data <- transformeR::subsetGrid(data, var=var_selection)
   
   return(data)
 } 
 
 nc2sp_df <- function(grid, output.dir){
-  sp <- grid2sp(grid)
+  sp <- transformeR::grid2sp(grid)
   df <- as.data.frame(sp)
   df <- df[,c(13,14,1:12)] 
   colnames(df) <- c("x", "y", 1:12)
@@ -290,7 +300,7 @@ nc2sp_df <- function(grid, output.dir){
 }
 
 
-downscaleTrace <- function (i, new.data.list, var.names, y1.list, y2.list, lonLim, latLim, hist.trace, data, model, local.var, trace.model.var.names, global.nc.attributes){
+downscaleTrace <- function(i, new.data.list, var.names, y1.list, y2.list, lonLim, latLim, hist.trace, data, model, local.var, trace.model.var.names, global.nc.attributes){
 
   # i <- 36
   # new.data.list <- new.trace.file.names
@@ -332,15 +342,15 @@ downscaleTrace <- function (i, new.data.list, var.names, y1.list, y2.list, lonLi
   
     message("Calculating year: ", real.years[j], "...")
     
-    new.trace.sub <- subsetGrid(new.trace.xy, years = fake.years[j])
+    new.trace.sub <- transformeR::subsetGrid(new.trace.xy, years = fake.years[j])
 
-    new.data <- prepareNewData(new.trace.sub, data)
+    new.data <- downscaleR::prepareNewData(new.trace.sub, data)
     
-    pred <- downscalePredict(new.data, model)
+    pred <- downscaleR::downscalePredict(new.data, model)
     
     pred$Data <- round(pred$Data, 2)
 
-    grid2nc(pred, NetCDFOutFile = paste0("../../Output/Trace21ka/", local.var, "/", local.var, real.years[j], "_tmp.nc"), missval = -9999, globalAttributes = global.nc.attributes)
+    loadeR.2nc::grid2nc(pred, NetCDFOutFile = paste0("../../Output/Trace21ka/", local.var, "/", local.var, real.years[j], "_tmp.nc"), missval = -9999, globalAttributes = global.nc.attributes)
 
     infile <- paste0("../../Output/Trace21ka/", local.var, "/", local.var, real.years[j],  "_tmp.nc")
     outfile <- paste0("../../Output/Trace21ka/", local.var, "/", local.var, real.years[j], ".nc")
@@ -409,18 +419,18 @@ downscaleTraceBimodel <- function (i, new.data.list, var.names, y1.list, y2.list
     
     message("Calculating year: ", real.years[j], "...")
     
-    new.trace.sub <- subsetGrid(new.trace.xy, years = fake.years[j])
+    new.trace.sub <- transformeR::subsetGrid(new.trace.xy, years = fake.years[j])
     
-    new.data <- prepareNewData(new.trace.sub, data)
+    new.data <- downscaleR::prepareNewData(new.trace.sub, data)
     
-    pred.bin <- downscalePredict(new.data, model.bin)
-    pred.cont <- downscalePredict(new.data, model)
+    pred.bin <- downscaleR::downscalePredict(new.data, model.bin)
+    pred.cont <- downscaleR::downscalePredict(new.data, model)
     
-    pred <- gridArithmetics(pred.bin, pred.cont, operator = "*")
+    pred <- transformeR::gridArithmetics(pred.bin, pred.cont, operator = "*")
     
     pred$Data <- round(pred$Data, 2)
     
-    grid2nc(pred, NetCDFOutFile = paste0("../../Output/Trace21ka/", local.var, "/", local.var, real.years[j], "_tmp.nc"), missval = -9999, globalAttributes = global.nc.attributes)
+    loadeR.2nc::grid2nc(pred, NetCDFOutFile = paste0("../../Output/Trace21ka/", local.var, "/", local.var, real.years[j], "_tmp.nc"), missval = -9999, globalAttributes = global.nc.attributes)
     
     infile <- paste0("../../Output/Trace21ka/", local.var, "/", local.var, real.years[j],  "_tmp.nc")
     outfile <- paste0("../../Output/Trace21ka/", local.var, "/", local.var, real.years[j], ".nc")
@@ -465,41 +475,41 @@ downscaleCMIP5 <- function(uerra, var_list, var_new_list, rcp, mod, lonLim = cmi
   hist.cmip5 <- loadCMIP(var_list = var_list, var_new_list = var_new_list, indir = indir, rcp = "historical", mod = mod, years=1961:1990)
 
   if(local.var == "pr"){
-    uerra.bin <- binaryGrid(uerra, condition = "GE", threshold = 1)
+    uerra.bin <- transformeR::binaryGrid(uerra, condition = "GE", threshold = 1)
     
-    data.bin <- prepareData(hist.cmip5, uerra.bin, spatial.predictors = cmip5.spatial.pars)
-    data <- prepareData(hist.cmip5, uerra, spatial.predictors = cmip5.spatial.pars)
+    data.bin <- downscaleR::prepareData(hist.cmip5, uerra.bin, spatial.predictors = cmip5.spatial.pars)
+    data <- downscaleR::prepareData(hist.cmip5, uerra, spatial.predictors = cmip5.spatial.pars)
     
-    model.bin <- downscaleTrain(data.bin, method = "GLM", family = binomial(link="logit"), predict = TRUE)
-    model <- downscaleTrain(data, method = "GLM", family = family.link, predict = TRUE, condition = "GE", threshold = 1)
+    model.bin <- downscaleR::downscaleTrain(data.bin, method = "GLM", family = binomial(link="logit"), predict = TRUE)
+    model <- downscaleR::downscaleTrain(data, method = "GLM", family = family.link, predict = TRUE, condition = "GE", threshold = 1)
   } else {
-    data <- prepareData(hist.cmip5, uerra, spatial.predictors = cmip5.spatial.pars)
-    model <- downscaleTrain(data, method = method, family = family.link, predict = TRUE)
+    data <- downscaleR::prepareData(hist.cmip5, uerra, spatial.predictors = cmip5.spatial.pars)
+    model <- downscaleR::downscaleTrain(data, method = method, family = family.link, predict = TRUE)
   } 
 
   rcp.cmip5.1 <- loadCMIP(var_list = var_list, var_new_list = var_new_list, indir = indir, rcp = "historical", mod = mod, years=1991:2005)
   rcp.cmip5.2 <- loadCMIP(var_list = var_list, var_new_list = var_new_list, indir = indir, rcp = rcp, mod = mod, years = 2006:2100)
   
-  rcp.cmip5 <- bindGrid(rcp.cmip5.1, rcp.cmip5.2, dimension = "time")
+  rcp.cmip5 <- transformeR::bindGrid(rcp.cmip5.1, rcp.cmip5.2, dimension = "time")
 
-  new.data <- prepareNewData(rcp.cmip5, data)
+  new.data <- downscaleR::prepareNewData(rcp.cmip5, data)
   
   if( local.var == "pr"){
-    pred.bin <- downscalePredict(new.data, model.bin)
-    pred.cont <- downscalePredict(new.data, model)
-    pred <- gridArithmetics(pred.bin, pred.cont, operator = "*")
+    pred.bin <- downscaleR::downscalePredict(new.data, model.bin)
+    pred.cont <- downscaleR::downscalePredict(new.data, model)
+    pred <- transformeR::gridArithmetics(pred.bin, pred.cont, operator = "*")
   } else {
-    pred <- downscalePredict(new.data, model)
+    pred <- downscaleR::downscalePredict(new.data, model)
   } 
 
   pred$Data <- round(pred$Data, 2)
   
-  grid2nc(pred, NetCDFOutFile = paste0(outdir, rcp, "/", mod, "/", local.var, "/", local.var, "1991-2100.nc"), missval = -9999, globalAttributes = global.nc.attributes)
+  loadeR.2nc::grid2nc(pred, NetCDFOutFile = paste0(outdir, rcp, "/", mod, "/", local.var, "/", local.var, "1991-2100.nc"), missval = -9999, globalAttributes = global.nc.attributes)
     
   for(i in 1:110){
     y <- c(1991:2100)[i] 
     yBP <- c(41:151)[i] 
-    pred.i <- subsetGrid(pred, years=y)
+    pred.i <- transformeR::subsetGrid(pred, years=y)
     
     pred.df <- nc2sp_df(pred.i)
     
