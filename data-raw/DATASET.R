@@ -1,3 +1,4 @@
+## code to prepare `DATASET` dataset goes here
 
 calBP.years <- c(-22000:-1,1:150)
 
@@ -29,6 +30,4 @@ trace.years.y1 <- c(22000,20000,19000,18500,18400,17500,17000,16000,15000,14900,
 
 trace.years.y2 <- c(20001,19001,18501,18401,17501,17001,16001,15001,14901,14351,13871,13101,12901,12501,12001,11701,11301,10801,10201,09701,09201,08701,08501,08001,07601,07201,06701,06201,05701,05001,04001,03201,02401,01401,00401, -00040)
 
-usethis::use_data(calBP.years, calendar.years, cmip5.rcps, cmip5.vars, cmip5.new.vars, cmip5.mods, trace.vars, trace.var.names, trace.model.var.names, trace.years.n, trace.years.bp, trace.years.nums, trace.years.y1, trace.years.y2, overwrite = TRUE)
-
-rm(list=ls())
+usethis::use_data(calBP.years, calendar.years, cmip5.rcps, cmip5.vars, cmip5.new.vars, cmip5.mods, trace.vars, trace.var.names, trace.model.var.names, trace.years.n, trace.years.bp, trace.years.nums, trace.years.y1, trace.years.y2, internal=TRUE, overwrite = TRUE)

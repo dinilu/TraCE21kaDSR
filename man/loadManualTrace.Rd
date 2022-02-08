@@ -13,7 +13,7 @@ loadManualTrace(
   latLim,
   dictionary = system.file("extdata", "TraCE21ka_dictionary.csv", package =
     "TraCE21kaDSR"),
-  var_selection = trace.model.var.names,
+  var_selection = "trace.model.var.names",
   compute_wss = TRUE
 )
 }

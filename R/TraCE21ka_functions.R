@@ -48,7 +48,7 @@ loadTraceData <- function(file, var=NULL, lonLim=trace.lon, latLim=trace.lat, st
 #' @export
 #'
 #' @examples #TBW
-loadTrace <- function(file_list, var_list, lonLim=trace.lon, latLim=trace.lat, start_date="1551-01-01", end_date="1990-12-31", years=1961:1990, dictionary=system.file("extdata", "TraCE21ka_dictionary.csv", package = "TraCE21kaDSR"), var_selection=trace.model.var.names, compute_wss=TRUE){
+loadTrace <- function(file_list, var_list, lonLim=trace.lon, latLim=trace.lat, start_date="1551-01-01", end_date="1990-12-31", years=1961:1990, dictionary=system.file("extdata", "TraCE21ka_dictionary.csv", package = "TraCE21kaDSR"), var_selection='trace.model.var.names', compute_wss=TRUE){
   
   data <- mapply(loadTraceData, file=file_list, var=var_list, MoreArgs=list(lonLim= lonLim, latLim = latLim, years=years, dictionary=dictionary), SIMPLIFY=FALSE)
   
@@ -181,7 +181,7 @@ loadManualTraceData <- function(file, var, trace.y1, trace.y2, lonLim = trace.lo
 #' @export
 #'
 #' @examples #TBW
-loadManualTrace <- function(file_list, var_list, trace.y1, trace.y2, lonLim, latLim, dictionary=system.file("extdata", "TraCE21ka_dictionary.csv", package = "TraCE21kaDSR"), var_selection=trace.model.var.names, compute_wss=TRUE){
+loadManualTrace <- function(file_list, var_list, trace.y1, trace.y2, lonLim, latLim, dictionary=system.file("extdata", "TraCE21ka_dictionary.csv", package = "TraCE21kaDSR"), var_selection='trace.model.var.names', compute_wss=TRUE){
   
   data <- mapply(loadManualTraceData, file=file_list, var=var_list, MoreArgs=list(trace.y1, trace.y2, lonLim, latLim, dictionary), SIMPLIFY=FALSE)
   
