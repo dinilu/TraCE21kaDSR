@@ -1,5 +1,5 @@
 
-elementwise.all.equal <- Vectorize(function(x, y) {isTRUE(all.equal(x, y))})
+.elementwise.all.equal <- Vectorize(function(x, y) {isTRUE(all.equal(x, y))})
 
 #' Get vertical levels in a grid.
 #'
@@ -29,7 +29,7 @@ getVerticalLevelPars <- function (grid, level) {
              paste(levels, collapse = ", "))
       }
     } else {
-      if (any(elementwise.all.equal(level, levels))) {
+      if (any(.elementwise.all.equal(level, levels))) {
         levelInd <- gcs$getVerticalAxis()$findCoordElement(level)
       } else {
         stop("Vertical level not found\nPossible values: ", 
@@ -49,11 +49,30 @@ getVerticalLevelPars <- function (grid, level) {
 utils::assignInNamespace("getVerticalLevelPars", getVerticalLevelPars, ns="loadeR")
 
 
+#' Copy coordinates info from one grid to another
+#'
+#' @param x A grid object (see loadeR package) to be modified.
+#' @param y A grid object from which to extract the coordinates info.
+#'
+#' @return The x grid object with the coordinates info from the y grid object.
+#' @export
+#'
+#' @examples
 copyXYCoords <- function(x, y){
   x$xyCoords <- y$xyCoords
   return(x)
 } 
 
+
+#' Compute wind speed from their horizontal (u) and vertical (v) components.
+#'
+#' @param u A grid object (see loadeR package) 
+#' @param v 
+#'
+#' @return
+#' @export
+#'
+#' @examples
 compute_wind_speed <- function(u, v) { 
   message("[", Sys.time(), "] Computing wind speed (wss) from its horizontal (u) and vertical (v) components")
   u <- transformeR::gridArithmetics(u, u, operator="*")
@@ -221,7 +240,7 @@ loadManualTraceData <- function(file, var, trace.y1, trace.y2, lonLim = trace.lo
   
   if(!is.null(var$level)){
     lev <- ncdf4::ncvar_get(trace.nc, "lev")
-    lev <- which(elementwise.all.equal(lev, var$level))
+    lev <- which(.elementwise.all.equal(lev, var$level))
     trace.var <- ncdf4::ncvar_get(trace.nc, dic$short_name, c(1,1,lev,1))
   }else{
     trace.var <- ncdf4::ncvar_get(trace.nc, dic$short_name)
