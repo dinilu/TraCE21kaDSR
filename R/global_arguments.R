@@ -15,10 +15,6 @@ cmip5.lat <- c(27, 45)
 
 trace.file.names <- paste0("../../Data/Trace21ka/", 'trace.vars', "/trace.36.400BP-1990CE.cam2.h0.", 'trace.vars', ".2160101-2204012.nc")
 
-# data("trace.years.n")
-# data("trace.years.bp")
-# data("trace.years.nums")
-
 new.trace.file.names <- mapply(FUN=function(x, y, z, w){paste0("../../Data/Trace21ka/", w, "/trace.", x, ".", y, ".cam2.h0.", w, ".", z, ".nc")}, 'trace.years.n', 'trace.years.bp', 'trace.years.nums', MoreArgs = list(w='trace.vars'), SIMPLIFY = FALSE)
 
 spatial.pars <- list(which.combine = 'trace.model.var.names',

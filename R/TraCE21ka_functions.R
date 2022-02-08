@@ -1,3 +1,25 @@
+
+#' Title
+#'
+#' @param indir TBW
+#' @param vars TBW
+#' @param file.number TBW 
+#'
+#' @return TBW
+#' @export
+#'
+#' @examples  #TBW
+traceFileNames <- function(indir, vars = NULL, file.number = 1){
+  # indir <- "../../Data/TraCE21ka/"
+  if(is.null(vars)){
+    vars <- trace.vars
+  }
+  years.n <- trace.years.n[file.number] 
+  years.bp <- trace.years.bp[file.number]
+  years.nums <- trace.years.nums[file.number]
+  paste0(indir, vars, "/trace.", years.n, ".", years.bp, ".cam2.h0.", vars, ".", years.nums, ".nc")
+} 
+
 #' Title
 #'
 #' @param file TBW
