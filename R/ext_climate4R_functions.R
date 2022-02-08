@@ -9,7 +9,7 @@
 #' @export
 #'
 #' @examples
-#' TBW
+#' # TBW
 getVerticalLevelPars <- function (grid, level) {
   gcs <- grid$getCoordinateSystem()
   if (gcs$hasVerticalAxis()) {
@@ -54,7 +54,7 @@ utils::assignInNamespace("getVerticalLevelPars", getVerticalLevelPars, ns="loade
 #' @return The x grid object with the coordinates info from the y grid object.
 #' @export
 #'
-#' @examples TBW
+#' @examples #TBW
 copyXYCoords <- function(x, y){
   x$xyCoords <- y$xyCoords
   return(x)
@@ -70,7 +70,7 @@ copyXYCoords <- function(x, y){
 #' @return TBW
 #' @export
 #'
-#' @examples TBW
+#' @examples #TBW
 modifyDates <- function(x, start_date="1961-01-01", end_date="1990-12-31") {
   x$Dates$start <- paste(.DateSeq(start_date, end_date, 12, 0), "00:00:00 GMT", sep = " ")
   x$Dates$end <- paste(.DateSeq(start_date, end_date, 12, 1), "00:00:00 GMT", sep = " ")
@@ -86,7 +86,7 @@ modifyDates <- function(x, start_date="1961-01-01", end_date="1990-12-31") {
 #' @return TBW
 #' @export
 #'
-#' @examples TBW
+#' @examples #TBW
 recalcGridResolution <- function(grid){
   attr(grid$xyCoords, "resX") <- (max(grid$xyCoords$x) - min(grid$xyCoords$x)) / (length(grid$xyCoords$x) - 1)
   attr(grid$xyCoords, "resY") <- (max(grid$xyCoords$y) - min(grid$xyCoords$y)) / (length(grid$xyCoords$y) - 1)
@@ -102,7 +102,7 @@ recalcGridResolution <- function(grid){
 #' @return TBW
 #' @export
 #'
-#' @examples TBW
+#' @examples #TBW
 nc2sp_df <- function(grid, output.dir){
   sp <- transformeR::grid2sp(grid)
   df <- as.data.frame(sp)
@@ -122,7 +122,7 @@ nc2sp_df <- function(grid, output.dir){
 #' @return TBW
 #' @export
 #'
-#' @examples TBW
+#' @examples #TBW
 compute_wind_speed <- function(u, v) { 
   message("[", Sys.time(), "] Computing wind speed (wss) from its horizontal (u) and vertical (v) components")
   u <- transformeR::gridArithmetics(u, u, operator="*")

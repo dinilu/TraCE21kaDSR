@@ -14,8 +14,8 @@
 #' @return TBW
 #' @export
 #'
-#' @examples
-loadCMIP <- function(var_list, var_new_list, indir = "../../Data/CMIP5/", rcp, mod, lonLim=cmip5.lon, latLim=cmip5.lat, years=NULL, dictionary="../../Data/CMIP5/dictionary.dic"){
+#' @examples #TBW
+loadCMIP <- function(var_list, var_new_list, indir = "../../Data/CMIP5/", rcp, mod, lonLim=cmip5.lon, latLim=cmip5.lat, years=NULL, dictionary=system.file("extdata", "CMIP5_dictionary.csv", package = "TraCE21kaDSR")){
   # var_list <- cmip5.vars
   # var_new_list <- cmip5.new.vars
   # indir <- "../../Data/CMIP5/"
@@ -24,7 +24,7 @@ loadCMIP <- function(var_list, var_new_list, indir = "../../Data/CMIP5/", rcp, m
   # lonLim <- cmip5.lon
   # latLim <- cmip5.lat
   # years <- 2006:2100
-  # dictionary <- "../../Data/CMIP5/dictionary.dic"
+  # dictionary <- system.file("extdata", "CMIP5_dictionary.csv", package = "TraCE21kaDSR")
   
   if(rcp != "historical"){
     rcp_folder <- paste0("RCP_", substr(rcp, 4, 4), "_", substr(rcp, 6, 6))
@@ -79,8 +79,8 @@ loadCMIP <- function(var_list, var_new_list, indir = "../../Data/CMIP5/", rcp, m
 #' @return TBW
 #' @export
 #'
-#' @examples TBW
-downscaleCMIP5 <- function(uerra, var_list, var_new_list, rcp, mod, lonLim = cmip5.lon, latLim = cmip5.lat, dictionary = "../../Data/CMIP5/dictionary.dic", indir = "../../Data/CMIP5/", outdir = "../../Output/CMIP5/", local.var, spatial.pars = cmip5.spatial.pars, method = "GLM", family.link = family.link, global.nc.attributes = global.nc.attributes){
+#' @examples #TBW
+downscaleCMIP5 <- function(uerra, var_list, var_new_list, rcp, mod, lonLim = cmip5.lon, latLim = cmip5.lat, dictionary = system.file("extdata", "CMIP5_dictionary.csv", package = "TraCE21kaDSR"), indir = "../../Data/CMIP5/", outdir = "../../Output/CMIP5/", local.var, spatial.pars = cmip5.spatial.pars, method = "GLM", family.link = family.link, global.nc.attributes = global.nc.attributes){
   
   # uerra <- uerra
   # var_list <- cmip5.vars
@@ -89,7 +89,7 @@ downscaleCMIP5 <- function(uerra, var_list, var_new_list, rcp, mod, lonLim = cmi
   # mod <- cmip5.mods[[3]]
   # lonLim <- cmip5.lon
   # latLim <- cmip5.lat
-  # dictionary <- "../../Data/CMIP5/dictionary.dic"
+  # dictionary <- system.file("extdata", "CMIP5_dictionary.csv", package = "TraCE21kaDSR")
   # indir <- "../../Data/CMIP5/"
   # outdir <- "../../Output/CMIP5/"
   # local.var <- "cld"

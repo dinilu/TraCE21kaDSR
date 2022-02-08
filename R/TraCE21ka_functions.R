@@ -12,8 +12,8 @@
 #' @return TBW
 #' @export
 #'
-#' @examples TBW
-loadTraceData <- function(file, var=NULL, lonLim=trace.lon, latLim=trace.lat, start_date="1551-01-01", end_date="1990-12-31", years=1961:1990, dictionary="../../Data/Trace21ka/dictionary.dic") {
+#' @examples #TBW
+loadTraceData <- function(file, var=NULL, lonLim=trace.lon, latLim=trace.lat, start_date="1551-01-01", end_date="1990-12-31", years=1961:1990, dictionary=system.file("extdata", "TraCE21ka_dictionary.csv", package = "TraCE21kaDSR")) {
   if(is.null(var)){
     stop("Argument var not defined. Please define a variable to be loaded.")
   }
@@ -47,8 +47,8 @@ loadTraceData <- function(file, var=NULL, lonLim=trace.lon, latLim=trace.lat, st
 #' @return TBW
 #' @export
 #'
-#' @examples TBW
-loadTrace <- function(file_list, var_list, lonLim=trace.lon, latLim=trace.lat, start_date="1551-01-01", end_date="1990-12-31", years=1961:1990, dictionary="../../Data/Trace21ka/dictionary.dic", var_selection=trace.model.var.names, compute_wss=TRUE){
+#' @examples #TBW
+loadTrace <- function(file_list, var_list, lonLim=trace.lon, latLim=trace.lat, start_date="1551-01-01", end_date="1990-12-31", years=1961:1990, dictionary=system.file("extdata", "TraCE21ka_dictionary.csv", package = "TraCE21kaDSR"), var_selection=trace.model.var.names, compute_wss=TRUE){
   
   data <- mapply(loadTraceData, file=file_list, var=var_list, MoreArgs=list(lonLim= lonLim, latLim = latLim, years=years, dictionary=dictionary), SIMPLIFY=FALSE)
   
@@ -79,8 +79,8 @@ loadTrace <- function(file_list, var_list, lonLim=trace.lon, latLim=trace.lat, s
 #' @return TBW
 #' @export
 #'
-#' @examples TBW
-loadManualTraceData <- function(file, var, trace.y1, trace.y2, lonLim = trace.lon, latLim = trace.lat, dictionary="../../Data/Trace21ka/dictionary.dic"){ 
+#' @examples #TBW
+loadManualTraceData <- function(file, var, trace.y1, trace.y2, lonLim = trace.lon, latLim = trace.lat, dictionary=system.file("extdata", "TraCE21ka_dictionary.csv", package = "TraCE21kaDSR")){ 
   
   var <- loadeR::findVerticalLevel(var)
   
@@ -180,8 +180,8 @@ loadManualTraceData <- function(file, var, trace.y1, trace.y2, lonLim = trace.lo
 #' @return TBW
 #' @export
 #'
-#' @examples TBW
-loadManualTrace <- function(file_list, var_list, trace.y1, trace.y2, lonLim, latLim, dictionary="../../Data/Trace21ka/dictionary.dic", var_selection=trace.model.var.names, compute_wss=TRUE){
+#' @examples #TBW
+loadManualTrace <- function(file_list, var_list, trace.y1, trace.y2, lonLim, latLim, dictionary=system.file("extdata", "TraCE21ka_dictionary.csv", package = "TraCE21kaDSR"), var_selection=trace.model.var.names, compute_wss=TRUE){
   
   data <- mapply(loadManualTraceData, file=file_list, var=var_list, MoreArgs=list(trace.y1, trace.y2, lonLim, latLim, dictionary), SIMPLIFY=FALSE)
   
@@ -217,14 +217,14 @@ loadManualTrace <- function(file_list, var_list, trace.y1, trace.y2, lonLim, lat
 #' @return TBW
 #' @export
 #'
-#' @examples TBW
+#' @examples #TBW
 downscaleTrace <- function(i, new.data.list, var.names, y1.list, y2.list, lonLim, latLim, hist.trace, data, model, local.var, trace.model.var.names, global.nc.attributes){
   
   # i <- 36
   # new.data.list <- new.trace.file.names
   # var.names <- trace.var.names
-  # y1.list <- years.y1
-  # y2.list <- years.y2
+  # y1.list <- trace.years.y1
+  # y2.list <- trace.years.y2
   # lonLim <- trace.lon
   # latLim <- trace.lat
   # hist.trace <- hist.trace
@@ -310,14 +310,14 @@ downscaleTrace <- function(i, new.data.list, var.names, y1.list, y2.list, lonLim
 #' @return TBW
 #' @export
 #'
-#' @examples TBW
+#' @examples #TBW
 downscaleTraceBimodel <- function (i, new.data.list, var.names, y1.list, y2.list, lonLim, latLim, hist.trace, data, model, data.bin, model.bin, local.var, trace.model.var.names, global.nc.attributes){
   
   # i <- 36
   # new.data.list <- new.trace.file.names
   # var.names <- trace.var.names
-  # y1.list <- years.y1
-  # y2.list <- years.y2
+  # y1.list <- trace.years.y1
+  # y2.list <- trace.years.y2
   # lonLim <- trace.lon
   # latLim <- trace.lat
   # hist.trace <- hist.trace

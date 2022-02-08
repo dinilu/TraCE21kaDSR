@@ -1,4 +1,4 @@
-#' Title
+#' Load UERRA dataset in climate4R grid format
 #'
 #' @param file TBW
 #' @param var TBW
@@ -10,8 +10,8 @@
 #' @return TBW
 #' @export
 #'
-#' @examples TBW
-loadUerra <- function(file, var, lonLim = uerra.lon, latLim = uerra.lat, dictionary = "../../Data/UERRA/UERRA_dictionary.dic", new.coordinates){
+#' @examples # TBW
+loadUerra <- function(file, var, lonLim = uerra.lon, latLim = uerra.lat, dictionary = system.file("extdata", "UERRA_dictionary.csv", package = "TraCE21kaDSR"), new.coordinates){
   
   data <- loadeR::loadGridData(file, var = var, lonLim = lonLim, latLim = latLim, dictionary = dictionary)
   
