@@ -4,14 +4,14 @@
 \alias{traceFileNames}
 \title{Title}
 \usage{
-traceFileNames(indir, vars = NULL, file.number = 1)
+traceFileNames(indir, files_n = 36, vars = NULL)
 }
 \arguments{
 \item{indir}{TBW}
 
-\item{vars}{TBW}
+\item{files_n}{TBW}
 
-\item{file.number}{TBW}
+\item{vars}{TBW}
 }
 \value{
 TBW
@@ -20,5 +20,6 @@ TBW
 Title
 }
 \examples{
- #TBW
+# historical.files <- traceFileNames("Data/TraCE21ka/", 36)
+# LGM.files <- traceFileNames("Data/TraCE21ka/", 1)
 }

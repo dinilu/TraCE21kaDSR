@@ -2,22 +2,25 @@
 #' Title
 #'
 #' @param indir TBW
+#' @param files_n TBW 
 #' @param vars TBW
-#' @param file.number TBW 
 #'
 #' @return TBW
 #' @export
 #'
-#' @examples  #TBW
-traceFileNames <- function(indir, vars = NULL, file.number = 1){
+#' @examples
+#' # historical.files <- traceFileNames("Data/TraCE21ka/", 36)
+#' # LGM.files <- traceFileNames("Data/TraCE21ka/", 1)
+traceFileNames <- function(indir, files_n = 36, vars = NULL){
   # indir <- "../../Data/TraCE21ka/"
   if(is.null(vars)){
-    vars <- trace.vars
+    vars <- trace.source.var.names
   }
-  years.n <- trace.years.n[file.number] 
-  years.bp <- trace.years.bp[file.number]
-  years.nums <- trace.years.nums[file.number]
-  paste0(indir, vars, "/trace.", years.n, ".", years.bp, ".cam2.h0.", vars, ".", years.nums, ".nc")
+  years.n <- trace.years.n[files_n] 
+  years.bp <- trace.years.bp[files_n]
+  years.nums <- trace.years.nums[files_n]
+  file.names <- paste0(indir, vars, "/trace.", years.n, ".", years.bp, ".cam2.h0.", vars, ".", years.nums, ".nc")
+  return(file.names)
 } 
 
 #' Title
@@ -32,21 +35,27 @@ traceFileNames <- function(indir, vars = NULL, file.number = 1){
 #' @param dictionary TBW 
 #'
 #' @return TBW
+#' @import loadeR
 #' @export
 #'
-#' @examples #TBW
-loadTraceData <- function(file, var=NULL, lonLim=trace.lon, latLim=trace.lat, start_date="1551-01-01", end_date="1990-12-31", years=1961:1990, dictionary=system.file("extdata", "TraCE21ka_dictionary.csv", package = "TraCE21kaDSR")) {
+#' @examples 
+#' # tas <- loadHistoricalTraceGrid(
+#' #            "Data/TraCE21ka/TS/trace.36.400BP-1990CE.cam2.h0.TS.2160101-2204012.nc",
+#' #            "tas")
+loadHistoricalTraceGrid <- function(file, var=NULL, lonLim=c(-25, 25), latLim=c(25, 50), start_date="1551-01-01", end_date="1990-12-31", years=1961:1990, dictionary=system.file("extdata", "TraCE21ka_dictionary.csv", package = "TraCE21kaDSR")) {
   if(is.null(var)){
     stop("Argument var not defined. Please define a variable to be loaded.")
   }
-  data <- loadeR::loadGridData(dataset = file,
+  
+  utils::assignInNamespace("getVerticalLevelPars", getVerticalLevelPars, ns="loadeR")
+  
+  data <- loadGridData(dataset = file,
                                var = var,
                                lonLim = lonLim,
                                latLim = latLim, 
                                dictionary = dictionary)
-  data$Dates$start <- paste(.DateSeq(start_date, end_date, 12, 0), "00:00:00 GMT", sep = " ")
-  data$Dates$end <- paste(.DateSeq(start_date, end_date, 12, 1), "00:00:00 GMT", sep = " ")
-  
+  data <- modifyDates(data, start_date, end_date)
+
   data <- transformeR::subsetGrid(data, years=years)  
   
   return(data)
@@ -55,33 +64,41 @@ loadTraceData <- function(file, var=NULL, lonLim=trace.lon, latLim=trace.lat, st
 
 #' Title
 #'
-#' @param file_list TBW
-#' @param var_list TBW
+#' @param files TBW
+#' @param vars TBW
 #' @param lonLim TBW
 #' @param latLim TBW
 #' @param start_date TBW
 #' @param end_date TBW
 #' @param years TBW
 #' @param dictionary TBW
-#' @param var_selection TBW
+#' @param selection_vars TBW
 #' @param compute_wss TBW
 #'
 #' @return TBW
 #' @export
 #'
-#' @examples #TBW
-loadTrace <- function(file_list, var_list, lonLim=trace.lon, latLim=trace.lat, start_date="1551-01-01", end_date="1990-12-31", years=1961:1990, dictionary=system.file("extdata", "TraCE21ka_dictionary.csv", package = "TraCE21kaDSR"), var_selection='trace.model.var.names', compute_wss=TRUE){
+#' @examples
+#' # historical.files <- traceFileNames(
+#' #                         "Data/TraCE21ka/", 36)  
+#' # data <- loadHistoricalTraceGrids(historical.files,
+#' #                                  c("tas", "tasmax", "tasmin", "hurs@992.5561",
+#' #                                  "ps", "pr", "cld", "u@992.5561", "v@992.5561")) 
+loadHistoricalTraceGrids <- function(files, vars = NULL, lonLim=c(-25, 25), latLim=c(25, 50), start_date="1551-01-01", end_date="1990-12-31", years=1961:1990, dictionary=system.file("extdata", "TraCE21ka_dictionary.csv", package = "TraCE21kaDSR"), selection_vars=TraCE21kaDSR:::trace.final.var.names, compute_wss=TRUE){
+  if(is.null(vars)){
+    vars <- trace.standard.var.names
+  } 
+
+  data <- mapply(loadHistoricalTraceGrid, file=files, var=vars, MoreArgs=list(lonLim = lonLim, latLim = latLim, years=years, dictionary=dictionary), SIMPLIFY=FALSE)
   
-  data <- mapply(loadTraceData, file=file_list, var=var_list, MoreArgs=list(lonLim= lonLim, latLim = latLim, years=years, dictionary=dictionary), SIMPLIFY=FALSE)
-  
-  names(data) <- var_list
+  names(data) <- vars
   
   if(compute_wss == TRUE){
     data$wss <- compute_wind_speed(data$'u@992.5561', data$'v@992.5561')
   } 
   
   data <- transformeR::makeMultiGrid(data)
-  data <- transformeR::subsetGrid(data, var=var_selection)
+  data <- transformeR::subsetGrid(data, var=selection_vars)
   
   return(data)
 } 
@@ -92,17 +109,24 @@ loadTrace <- function(file_list, var_list, lonLim=trace.lon, latLim=trace.lat, s
 #'
 #' @param file TBW
 #' @param var TBW
-#' @param trace.y1 TBW
-#' @param trace.y2 TBW
 #' @param lonLim TBW
 #' @param latLim TBW
 #' @param dictionary TBW
 #'
 #' @return TBW
+#' @import loadeR
 #' @export
 #'
-#' @examples #TBW
-loadManualTraceData <- function(file, var, trace.y1, trace.y2, lonLim = trace.lon, latLim = trace.lat, dictionary=system.file("extdata", "TraCE21ka_dictionary.csv", package = "TraCE21kaDSR")){ 
+#' @examples
+#' # tas <- loadTraceGrid(
+#' #            "Data/TraCE21ka/TS/trace.01.22000-20001BP.cam2.h0.TS.0000101-0200012.nc",
+#' #            "tas", 1, lonLim = NULL, latLim=NULL) 
+loadTraceGrid <- function(file, var, lonLim = c(-25, 25), latLim = c(25, 50), dictionary=system.file("extdata", "TraCE21ka_dictionary.csv", package = "TraCE21kaDSR")){ 
+  
+  file.number <- as.numeric(substr(sub(".*trace.", "", file), 1,2))
+  
+  trace.y1 <- trace.years.y1[file.number] 
+  trace.y2 <- trace.years.y2[file.number] 
   
   var <- loadeR::findVerticalLevel(var)
   
@@ -189,32 +213,42 @@ loadManualTraceData <- function(file, var, trace.y1, trace.y2, lonLim = trace.lo
 
 #' Title
 #'
-#' @param file_list TBW
-#' @param var_list TBW
-#' @param trace.y1 TBW
-#' @param trace.y2 TBW
+#' @param files TBW
+#' @param vars TBW
 #' @param lonLim TBW
 #' @param latLim TBW
 #' @param dictionary TBW
-#' @param var_selection TBW
+#' @param selection_vars TBW
 #' @param compute_wss TBW
 #'
 #' @return TBW
 #' @export
 #'
-#' @examples #TBW
-loadManualTrace <- function(file_list, var_list, trace.y1, trace.y2, lonLim, latLim, dictionary=system.file("extdata", "TraCE21ka_dictionary.csv", package = "TraCE21kaDSR"), var_selection='trace.model.var.names', compute_wss=TRUE){
+#' @examples
+#' # LGM.files <- traceFileNames(
+#' #                         "../Data/TraCE21ka/", 1)  
+#' # data <- loadTraceGrids(LGM.files,
+#' #                                  c("tas", "tasmax", "tasmin", "hurs@992.5561",
+#' #                                  "ps", "pr", "cld", "u@992.5561", "v@992.5561"), 1,
+#' #                                  selection_vars = c("tas", "tasmax", "tasmin",
+#' #                                                  "hurs@992.5561", "ps", "pr",
+#' #                                                  "cld", "wss"))
+loadTraceGrids <- function(files, vars = NULL, lonLim = c(-25, 25), latLim = c(25, 50), dictionary=system.file("extdata", "TraCE21ka_dictionary.csv", package = "TraCE21kaDSR"), selection_vars=TraCE21kaDSR:::trace.final.var.names, compute_wss=TRUE){
   
-  data <- mapply(loadManualTraceData, file=file_list, var=var_list, MoreArgs=list(trace.y1, trace.y2, lonLim, latLim, dictionary), SIMPLIFY=FALSE)
+  if(is.null(vars)){
+    vars <- trace.standard.var.names
+  } 
   
-  names(data) <- var_list
+  data <- mapply(loadTraceGrid, file = files, var = vars, MoreArgs = list(lonLim, latLim, dictionary), SIMPLIFY = FALSE)
+  
+  names(data) <- vars
   
   if(compute_wss == TRUE){
     data$wss <- compute_wind_speed(data$'u@992.5561', data$'v@992.5561')
   } 
   
   data <- transformeR::makeMultiGrid(data)
-  data <- transformeR::subsetGrid(data, var=var_selection)
+  data <- transformeR::subsetGrid(data, var=selection_vars)
   
   return(data)
 } 
@@ -222,52 +256,53 @@ loadManualTrace <- function(file_list, var_list, trace.y1, trace.y2, lonLim, lat
 
 #' Title
 #'
-#' @param i TBW
-#' @param new.data.list TBW
-#' @param var.names TBW
-#' @param y1.list TBW
-#' @param y2.list TBW
+#' @param files_n TBW
+#' @param outdir TBW  
+#' @param trace_dir TBW
+#' @param vars TBW
 #' @param lonLim TBW
 #' @param latLim TBW
 #' @param hist.trace TBW
-#' @param data TBW
+#' @param mod_data TBW
 #' @param model TBW
-#' @param local.var TBW
-#' @param trace.model.var.names TBW
+#' @param selection_vars TBW
 #' @param global.nc.attributes TBW
 #'
 #' @return TBW
 #' @export
 #'
 #' @examples #TBW
-downscaleTrace <- function(i, new.data.list, var.names, y1.list, y2.list, lonLim, latLim, hist.trace, data, model, local.var, trace.model.var.names, global.nc.attributes){
-  
-  # i <- 36
-  # new.data.list <- new.trace.file.names
-  # var.names <- trace.var.names
-  # y1.list <- trace.years.y1
-  # y2.list <- trace.years.y2
-  # lonLim <- trace.lon
-  # latLim <- trace.lat
+downscaleTrace <- function(files_n, outdir, trace_dir, vars = NULL, lonLim = c(-25, 25), latLim = c(25, 50), hist.trace, mod_data, model, selection_vars = NULL, global.nc.attributes = NULL){
+  # files_n <- 1
+  # outdir <- "../Output/Trace21ka/"
+  # trace_dir <- "../Data/TraCE21ka/"
+  # vars <- NULL
+  # lonLim <- c(-25, 25)
+  # latLim <- c(25, 50)
   # hist.trace <- hist.trace
-  # data <- data
+  # mod_data <- data
   # model <- model
-  # local.var <- local.var
-  # trace.model.var.names <- trace.model.var.names
+  # selection_vars <- NULL
   # global.nc.attributes <- global.nc.attributes
   
-  if(!dir.exists(paste0("../../Output/Trace21ka/", local.var, "/dat"))){
-    dir.create(paste0("../../Output/Trace21ka/", local.var, "/dat"), recursive = TRUE)
+  y.var <- mod_data$y$Variable$varName
+  
+  if(!dir.exists(paste0(outdir, y.var, "/dat"))){
+    dir.create(paste0(outdir, y.var, "/dat"), recursive = TRUE)
   } 
   
-  new.data <- new.data.list[[i]] 
-  y1 <- y1.list[[i]] 
-  y2 <- y2.list[[i]] 
+  if(is.null(selection_vars)){
+    selection_vars <- trace.final.var.names
+  } 
   
-  new.trace <- loadManualTrace(new.data, var.names, y1, y2, lonLim, latLim, var_selection = trace.model.var.names)
+  new.data <- traceFileNames(trace_dir, files_n)
+
+  new.trace <- loadTraceGrids(new.data, vars, lonLim, latLim, selection_vars = selection_vars)
   
   new.trace.xy <- copyXYCoords(new.trace, hist.trace)
   
+  y1 <- trace.years.y1[[files_n]] 
+  y2 <- trace.years.y2[[files_n]] 
   if(y1 == 400){
     real.years <- c(-y1:-1,1:-y2)
   }else{
@@ -283,19 +318,17 @@ downscaleTrace <- function(i, new.data.list, var.names, y1.list, y2.list, lonLim
     message("Calculating year: ", real.years[j], "...")
     
     new.trace.sub <- transformeR::subsetGrid(new.trace.xy, years = fake.years[j])
-    
-    new.data <- downscaleR::prepareNewData(new.trace.sub, data)
+
+    new.data <- downscaleR::prepareNewData(new.trace.sub, mod_data)
     
     pred <- downscaleR::downscalePredict(new.data, model)
     
     pred$Data <- round(pred$Data, 2)
     
-    loadeR.2nc::grid2nc(pred, NetCDFOutFile = paste0("../../Output/Trace21ka/", local.var, "/", local.var, real.years[j], "_tmp.nc"), missval = -9999, globalAttributes = global.nc.attributes)
+    loadeR.2nc::grid2nc(pred, NetCDFOutFile = paste0(outdir, y.var, "/", y.var, real.years[j], "_tmp.nc"), missval = -9999, globalAttributes = global.nc.attributes)
     
-    infile <- paste0("../../Output/Trace21ka/", local.var, "/", local.var, real.years[j],  "_tmp.nc")
-    outfile <- paste0("../../Output/Trace21ka/", local.var, "/", local.var, real.years[j], ".nc")
-    
-    message("New year: ", fake.years[j] + ydiff)
+    infile <- paste0(outdir, y.var, "/", y.var, real.years[j],  "_tmp.nc")
+    outfile <- paste0(outdir, y.var, "/", y.var, real.years[j], ".nc")
     
     # system(paste0("cdo -r setreftime,1950-01-01,00:00:00,hours -shifttime,", ydiff, "y ", infile, " ", outfile)) #not working  
     system2("cdo", c("-r", "setreftime,1950-01-01,00:00:00,hours", paste0("-shifttime,", ydiff, "y"), infile, outfile))
@@ -303,7 +336,7 @@ downscaleTrace <- function(i, new.data.list, var.names, y1.list, y2.list, lonLim
     
     pred.df <- nc2sp_df(pred)
     
-    utils::write.table(pred.df, file=paste0("../../Output/Trace21ka/", local.var, "/dat/", local.var, real.years[j], ".dat"), sep="\t")
+    utils::write.table(pred.df, file=paste0(outdir, y.var, "/dat/", y.var, real.years[j], ".dat"), sep="\t")
     
     message("   ...done")
   } 
@@ -315,7 +348,7 @@ downscaleTrace <- function(i, new.data.list, var.names, y1.list, y2.list, lonLim
 #'
 #' @param i TBW
 #' @param new.data.list TBW
-#' @param var.names TBW
+#' @param vars TBW
 #' @param y1.list TBW
 #' @param y2.list TBW
 #' @param lonLim TBW
@@ -326,18 +359,18 @@ downscaleTrace <- function(i, new.data.list, var.names, y1.list, y2.list, lonLim
 #' @param data.bin TBW
 #' @param model.bin TBW
 #' @param local.var TBW
-#' @param trace.model.var.names TBW
+#' @param trace_dir TBW
 #' @param global.nc.attributes TBW
 #'
 #' @return TBW
 #' @export
 #'
 #' @examples #TBW
-downscaleTraceBimodel <- function (i, new.data.list, var.names, y1.list, y2.list, lonLim, latLim, hist.trace, data, model, data.bin, model.bin, local.var, trace.model.var.names, global.nc.attributes){
+downscaleTraceBimodel <- function (i, new.data.list, vars, y1.list, y2.list, lonLim, latLim, hist.trace, data, model, data.bin, model.bin, local.var, trace_dir, global.nc.attributes){
   
   # i <- 36
   # new.data.list <- new.trace.file.names
-  # var.names <- trace.var.names
+  # vars <- TraCE21kaDSR:::trace.standard.var.names
   # y1.list <- trace.years.y1
   # y2.list <- trace.years.y2
   # lonLim <- trace.lon
@@ -348,7 +381,7 @@ downscaleTraceBimodel <- function (i, new.data.list, var.names, y1.list, y2.list
   # data.bin <- data_bin
   # model.bin <- model_bin
   # local.var <- local.var
-  # trace.model.var.names <- trace.model.var.names
+  # trace_dir <- TraCE21kaDSR:::trace.final.var.names
   # global.nc.attributes <- global.nc.attributes
   
   if(!dir.exists(paste0("../../Output/Trace21ka/", local.var, "/dat"))){
@@ -359,7 +392,7 @@ downscaleTraceBimodel <- function (i, new.data.list, var.names, y1.list, y2.list
   y1 <- y1.list[[i]] 
   y2 <- y2.list[[i]] 
   
-  new.trace <- loadManualTrace(new.data, var.names, y1, y2, lonLim, latLim, var_selection = trace.model.var.names)
+  new.trace <- loadTraceGrids(new.data, vars, y1, y2, lonLim, latLim, selection_vars = trace_dir)
   
   new.trace.xy <- copyXYCoords(new.trace, hist.trace)
   

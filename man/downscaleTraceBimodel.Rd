@@ -7,7 +7,7 @@
 downscaleTraceBimodel(
   i,
   new.data.list,
-  var.names,
+  vars,
   y1.list,
   y2.list,
   lonLim,
@@ -18,7 +18,7 @@ downscaleTraceBimodel(
   data.bin,
   model.bin,
   local.var,
-  trace.model.var.names,
+  trace_dir,
   global.nc.attributes
 )
 }
@@ -27,7 +27,7 @@ downscaleTraceBimodel(
 
 \item{new.data.list}{TBW}
 
-\item{var.names}{TBW}
+\item{vars}{TBW}
 
 \item{y1.list}{TBW}
 
@@ -49,7 +49,7 @@ downscaleTraceBimodel(
 
 \item{local.var}{TBW}
 
-\item{trace.model.var.names}{TBW}
+\item{trace_dir}{TBW}
 
 \item{global.nc.attributes}{TBW}
 }

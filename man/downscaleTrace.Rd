@@ -5,31 +5,27 @@
 \title{Title}
 \usage{
 downscaleTrace(
-  i,
-  new.data.list,
-  var.names,
-  y1.list,
-  y2.list,
-  lonLim,
-  latLim,
+  files_n,
+  outdir,
+  trace_dir,
+  vars = NULL,
+  lonLim = c(-25, 25),
+  latLim = c(25, 50),
   hist.trace,
-  data,
+  mod_data,
   model,
-  local.var,
-  trace.model.var.names,
-  global.nc.attributes
+  selection_vars = NULL,
+  global.nc.attributes = NULL
 )
 }
 \arguments{
-\item{i}{TBW}
+\item{files_n}{TBW}
 
-\item{new.data.list}{TBW}
+\item{outdir}{TBW}
 
-\item{var.names}{TBW}
+\item{trace_dir}{TBW}
 
-\item{y1.list}{TBW}
-
-\item{y2.list}{TBW}
+\item{vars}{TBW}
 
 \item{lonLim}{TBW}
 
@@ -37,13 +33,11 @@ downscaleTrace(
 
 \item{hist.trace}{TBW}
 
-\item{data}{TBW}
+\item{mod_data}{TBW}
 
 \item{model}{TBW}
 
-\item{local.var}{TBW}
-
-\item{trace.model.var.names}{TBW}
+\item{selection_vars}{TBW}
 
 \item{global.nc.attributes}{TBW}
 }
