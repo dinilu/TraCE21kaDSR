@@ -12,12 +12,12 @@ LazyData: true
 Imports: 
     climate4R.UDG,
     downscaleR,
-    loadeR,
     loadeR.2nc,
     loadeR.java,
     ncdf4,
     rJava,
     transformeR,
+    utils,
     zoo
 RoxygenNote: 7.1.2
 Depends: 

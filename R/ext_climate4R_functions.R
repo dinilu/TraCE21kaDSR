@@ -47,6 +47,17 @@ getVerticalLevelPars <- function (grid, level) {
 #   utils::assignInNamespace("getVerticalLevelPars", getVerticalLevelPars, ns="loadeR")
 # } 
 
+#' TBW
+#'
+#' @param dicPath TBW
+#' @param var TBW
+#' @param time TBW  
+#'
+#' @return TBW
+#'
+#' @examples
+#' # TBW
+dictionaryLookup <- utils::getFromNamespace("dictionaryLookup", "loadeR")
 
 #' Copy coordinates info from one grid to another
 #'
