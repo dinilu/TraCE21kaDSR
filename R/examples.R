@@ -31,6 +31,7 @@
 # 
 # uerra = loadUerra("../Data/UERRA/UERRA-HARMONIE/2m_temperature/latlon/1961-90_2m_temperature.nc", "tas")
 # 
+# require(downscaleR)
 # data = prepareData(hist.trace, uerra, spatial.predictors = spatial.pars)
 # 
 # model = downscaleTrain(data, method = "GLM", family = family.link, predict = TRUE)
