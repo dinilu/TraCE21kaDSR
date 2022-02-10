@@ -1,12 +1,13 @@
 
+
 #' Title
 #'
 #' @param x TBW
 #' @param y TBW
 #'
 #' @return # TBW
-.elementwise.all.equal <- function(x, y){Vectorize(function(x, y) {isTRUE(all.equal(x, y))})} #Modified for documenting
-# .elementwise.all.equal <- Vectorize(function(x, y) {isTRUE(all.equal(x, y))}) #Working version 
+# .elementwise.all.equal <- function(x, y){Vectorize(function(x, y) {isTRUE(all.equal(x, y))})} #Modified for documenting
+.elementwise.all.equal <- Vectorize(function(x, y) {isTRUE(all.equal(x, y))}) #Working version 
 
 
 #' Title
