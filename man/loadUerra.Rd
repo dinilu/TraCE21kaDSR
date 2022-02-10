@@ -2,36 +2,41 @@
 % Please edit documentation in R/UERRA_functions.R
 \name{loadUerra}
 \alias{loadUerra}
-\title{Load UERRA dataset in climate4R grid format}
+\title{Load UERRA data into climate4R grid format}
 \usage{
 loadUerra(
   file,
   var,
-  lonLim = uerra.lon,
-  latLim = uerra.lat,
+  lonLim = NULL,
+  latLim = NULL,
   dictionary = system.file("extdata", "UERRA_dictionary.csv", package = "TraCE21kaDSR"),
-  new.coordinates
+  aggr.times = NULL,
+  aggr.fun = mean
 )
 }
 \arguments{
-\item{file}{TBW}
+\item{file}{A string with the file name with the UERRA data to be loaded.}
 
-\item{var}{TBW}
+\item{var}{A string with the variable name from the file to be loaded.}
 
-\item{lonLim}{TBW}
+\item{lonLim}{An optional vector with two values specifying the longitudinal limits (min and max) to be loaded.}
 
-\item{latLim}{TBW}
+\item{latLim}{An optional vector with two values specifying the latitudinal limits (min and max) to be loaded.}
 
-\item{dictionary}{TBW}
+\item{dictionary}{An optional string with the filename with the dictionary for the UERRA data. By default it loads an internal dictionary from the package.}
 
-\item{new.coordinates}{TBW}
+\item{aggr.times}{An optional numeric specifying the number of cells to be aggregated.}
+
+\item{aggr.fun}{An optional function specifying the function to be used in aggregation if aggr.times was specified.}
 }
 \value{
 TBW
 }
 \description{
-Load UERRA dataset in climate4R grid format
+Load UERRA data into climate4R grid format
 }
 \examples{
-# TBW
+# uerra.file <- "../Data/UERRA/UERRA-HARMONIE/2m_temperature/latlon/1961-90_2m_temperature.nc"
+# local.var <- "tas"
+# uerra = loadUerra(uerra.file, local.var)
 }
