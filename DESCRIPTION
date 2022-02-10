@@ -21,4 +21,5 @@ Imports:
     zoo
 RoxygenNote: 7.1.2
 Depends: 
+    loadeR,
     R (>= 2.10)
