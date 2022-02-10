@@ -12,12 +12,15 @@ cmip5.new.vars <- c("tas", "tasmax", "tasmin", "hurs", "ps", "pr", "cld", "wss")
 cmip5.mods <- c("CESM1-CAM5", "CSIRO-Mk3-6-0", "IPSL-CM5A-MR")
 
 
-trace.vars = c("TS", "TSMX", "TSMN", "RELHUM", "PS", "PRECC", "CLDTOT", "U", "V")
+# trace.vars = c("TS", "TSMX", "TSMN", "RELHUM", "PS", "PRECC", "CLDTOT", "U", "V")
+trace.source.var.names = c("TS", "TSMX", "TSMN", "RELHUM", "PS", "PRECC", "CLDTOT", "U", "V")
 
-trace.var.names = c("tas", "tasmax", "tasmin", "hurs@992.5561", "ps",
+# trace.var.names = c("tas", "tasmax", "tasmin", "hurs@992.5561", "ps", "pr", "cld", "u@992.5561", "v@992.5561")
+trace.standard.var.names = c("tas", "tasmax", "tasmin", "hurs@992.5561", "ps",
                     "pr", "cld", "u@992.5561", "v@992.5561")
 
-trace.model.var.names = c("tas", "tasmax", "tasmin", "hurs@992.5561", "ps",
+# trace.model.var.names = c("tas", "tasmax", "tasmin", "hurs@992.5561", "ps", "pr", "cld", "wss")
+trace.final.var.names = c("tas", "tasmax", "tasmin", "hurs@992.5561", "ps",
                           "pr", "cld", "wss")
 
 trace.years.n <- sprintf("%02d",1:36)
@@ -30,4 +33,5 @@ trace.years.y1 <- c(22000,20000,19000,18500,18400,17500,17000,16000,15000,14900,
 
 trace.years.y2 <- c(20001,19001,18501,18401,17501,17001,16001,15001,14901,14351,13871,13101,12901,12501,12001,11701,11301,10801,10201,09701,09201,08701,08501,08001,07601,07201,06701,06201,05701,05001,04001,03201,02401,01401,00401, -00040)
 
-usethis::use_data(calBP.years, calendar.years, cmip5.rcps, cmip5.vars, cmip5.new.vars, cmip5.mods, trace.vars, trace.var.names, trace.model.var.names, trace.years.n, trace.years.bp, trace.years.nums, trace.years.y1, trace.years.y2, internal=TRUE, overwrite = TRUE)
+usethis::use_data(calBP.years, calendar.years, cmip5.rcps, cmip5.vars, cmip5.new.vars, cmip5.mods, trace.source.var.names, trace.standard.var.names, trace.final.var.names, trace.years.n, trace.years.bp, trace.years.nums, trace.years.y1, trace.years.y2, internal=TRUE, overwrite = TRUE)
+
