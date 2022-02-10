@@ -43,7 +43,9 @@ getVerticalLevelPars <- function (grid, level) {
   return(list(level = level, zRange = zRange))
 }
 
-utils::assignInNamespace("getVerticalLevelPars", getVerticalLevelPars, ns="loadeR")
+# overwriteGetVerticalLevelPars <- function(){
+#   utils::assignInNamespace("getVerticalLevelPars", getVerticalLevelPars, ns="loadeR")
+# } 
 
 
 #' Copy coordinates info from one grid to another
