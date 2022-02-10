@@ -14,6 +14,7 @@ Imports:
     downscaleR,
     loadeR,
     loadeR.2nc,
+    loadeR.java,
     ncdf4,
     rJava,
     transformeR,
