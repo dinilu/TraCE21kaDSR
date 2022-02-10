@@ -10,8 +10,8 @@ loadCMIP(
   indir = "../../Data/CMIP5/",
   rcp,
   mod,
-  lonLim = cmip5.lon,
-  latLim = cmip5.lat,
+  lonLim = NULL,
+  latLim = NULL,
   years = NULL,
   dictionary = system.file("extdata", "CMIP5_dictionary.csv", package = "TraCE21kaDSR")
 )
