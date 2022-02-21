@@ -20,8 +20,7 @@ trace.standard.var.names = c("tas", "tasmax", "tasmin", "hurs@992.5561", "ps",
                     "pr", "cld", "u@992.5561", "v@992.5561")
 
 # trace.model.var.names = c("tas", "tasmax", "tasmin", "hurs@992.5561", "ps", "pr", "cld", "wss")
-trace.final.var.names = c("tas", "tasmax", "tasmin", "hurs@992.5561", "ps",
-                          "pr", "cld", "wss")
+trace.final.var.names = c("tas", "tasmax", "tasmin", "hurs@992.5561", "ps", "pr", "cld", "wss")
 
 trace.years.n <- sprintf("%02d",1:36)
 

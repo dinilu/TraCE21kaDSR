@@ -84,7 +84,7 @@ loadHistoricalTraceGrid <- function(file, var=NULL, lonLim=c(-25, 25), latLim=c(
 #' # data <- loadHistoricalTraceGrids(historical.files,
 #' #                                  c("tas", "tasmax", "tasmin", "hurs@992.5561",
 #' #                                  "ps", "pr", "cld", "u@992.5561", "v@992.5561")) 
-loadHistoricalTraceGrids <- function(files, vars = NULL, lonLim=c(-25, 25), latLim=c(25, 50), start_date="1551-01-01", end_date="1990-12-31", years=1961:1990, dictionary=system.file("extdata", "TraCE21ka_dictionary.csv", package = "TraCE21kaDSR"), selection_vars=TraCE21kaDSR:::trace.final.var.names, compute_wss=TRUE){
+loadHistoricalTraceGrids <- function(files, vars = NULL, lonLim=c(-25, 25), latLim=c(25, 50), start_date="1551-01-01", end_date="1990-12-31", years=1961:1990, dictionary=system.file("extdata", "TraCE21ka_dictionary.csv", package = "TraCE21kaDSR"), selection_vars = c("tas", "tasmax", "tasmin", "hurs@992.5561", "ps", "pr", "cld", "wss"), compute_wss=TRUE){
   if(is.null(vars)){
     vars <- trace.standard.var.names
   } 
@@ -233,7 +233,7 @@ loadTraceGrid <- function(file, var, lonLim = c(-25, 25), latLim = c(25, 50), di
 #' #                                  selection_vars = c("tas", "tasmax", "tasmin",
 #' #                                                  "hurs@992.5561", "ps", "pr",
 #' #                                                  "cld", "wss"))
-loadTraceGrids <- function(files, vars = NULL, lonLim = c(-25, 25), latLim = c(25, 50), dictionary=system.file("extdata", "TraCE21ka_dictionary.csv", package = "TraCE21kaDSR"), selection_vars=TraCE21kaDSR:::trace.final.var.names, compute_wss=TRUE){
+loadTraceGrids <- function(files, vars = NULL, lonLim = c(-25, 25), latLim = c(25, 50), dictionary=system.file("extdata", "TraCE21ka_dictionary.csv", package = "TraCE21kaDSR"), selection_vars = c("tas", "tasmax", "tasmin", "hurs@992.5561", "ps", "pr", "cld", "wss"), compute_wss=TRUE){
   
   if(is.null(vars)){
     vars <- trace.standard.var.names
@@ -262,28 +262,28 @@ loadTraceGrids <- function(files, vars = NULL, lonLim = c(-25, 25), latLim = c(2
 #' @param vars TBW
 #' @param lonLim TBW
 #' @param latLim TBW
-#' @param hist.trace TBW
+#' @param hist_trace TBW
 #' @param mod_data TBW
 #' @param model TBW
 #' @param selection_vars TBW
-#' @param global.nc.attributes TBW
+#' @param global_nc_attributes TBW
 #'
 #' @return TBW
 #' @export
 #'
 #' @examples #TBW
-downscaleTrace <- function(files_n, outdir, trace_dir, vars = NULL, lonLim = c(-25, 25), latLim = c(25, 50), hist.trace, mod_data, model, selection_vars = NULL, global.nc.attributes = NULL){
+downscaleTrace <- function(files_n, outdir, trace_dir, vars = NULL, lonLim = c(-25, 25), latLim = c(25, 50), hist_trace, mod_data, model, selection_vars = NULL, global_nc_attributes = NULL){
   # files_n <- 1
   # outdir <- "../Output/Trace21ka/"
   # trace_dir <- "../Data/TraCE21ka/"
   # vars <- NULL
   # lonLim <- c(-25, 25)
   # latLim <- c(25, 50)
-  # hist.trace <- hist.trace
+  # hist_trace <- hist.trace
   # mod_data <- data
   # model <- model
   # selection_vars <- NULL
-  # global.nc.attributes <- global.nc.attributes
+  # global_nc_attributes <- global.nc.attributes
   
   y.var <- mod_data$y$Variable$varName
   
@@ -292,14 +292,14 @@ downscaleTrace <- function(files_n, outdir, trace_dir, vars = NULL, lonLim = c(-
   } 
   
   if(is.null(selection_vars)){
-    selection_vars <- trace.final.var.names
+    selection_vars <- c("tas", "tasmax", "tasmin", "hurs@992.5561", "ps", "pr", "cld", "wss")
   } 
   
   new.data <- traceFileNames(trace_dir, files_n)
 
   new.trace <- loadTraceGrids(new.data, vars, lonLim, latLim, selection_vars = selection_vars)
   
-  new.trace.xy <- copyXYCoords(new.trace, hist.trace)
+  new.trace.xy <- copyXYCoords(new.trace, hist_trace)
   
   y1 <- trace.years.y1[[files_n]] 
   y2 <- trace.years.y2[[files_n]] 
@@ -325,13 +325,13 @@ downscaleTrace <- function(files_n, outdir, trace_dir, vars = NULL, lonLim = c(-
     
     pred$Data <- round(pred$Data, 2)
     
-    loadeR.2nc::grid2nc(pred, NetCDFOutFile = paste0(outdir, y.var, "/", y.var, real.years[j], "_tmp.nc"), missval = -9999, globalAttributes = global.nc.attributes)
+    loadeR.2nc::grid2nc(pred, NetCDFOutFile = paste0(outdir, y.var, "/", y.var, real.years[j], "_tmp.nc"), missval = -9999, globalAttributes = global_nc_attributes)
     
     infile <- paste0(outdir, y.var, "/", y.var, real.years[j],  "_tmp.nc")
     outfile <- paste0(outdir, y.var, "/", y.var, real.years[j], ".nc")
     
     # system(paste0("cdo -r setreftime,1950-01-01,00:00:00,hours -shifttime,", ydiff, "y ", infile, " ", outfile)) #not working  
-    system2("cdo", c("-r", "setreftime,1950-01-01,00:00:00,hours", paste0("-shifttime,", ydiff, "y"), infile, outfile))
+    system2("cdo", c("-r", "setreftime,1950-01-01,00:00:00,1mon", "-setcalendar,standard", paste0("-shifttime,", ydiff, "y"), infile, outfile))
     file.remove(infile)
     
     pred.df <- nc2sp_df(pred)
@@ -433,7 +433,7 @@ downscaleTraceBimodel <- function (i, new.data.list, vars, y1.list, y2.list, lon
     message("New year: ", fake.years[[j]] + ydiff)
     
     # system(paste0("cdo -r setreftime,1950-01-01,00:00:00,hours -shifttime,", ydiff, "y ", infile, " ", outfile))
-    system2("cdo", c("-r", "setreftime,1950-01-01,00:00:00,hours", paste0("-shifttime,", ydiff, "y"), infile, outfile))
+    system2("cdo", c("-r", "setreftime,1950-01-01,00:00:00,1mon", "-setcalendar,standard", paste0("-shifttime,", ydiff, "y"), infile, outfile))
     file.remove(infile)
     
     pred.df <- nc2sp_df(pred)

@@ -11,11 +11,11 @@ downscaleTrace(
   vars = NULL,
   lonLim = c(-25, 25),
   latLim = c(25, 50),
-  hist.trace,
+  hist_trace,
   mod_data,
   model,
   selection_vars = NULL,
-  global.nc.attributes = NULL
+  global_nc_attributes = NULL
 )
 }
 \arguments{
@@ -31,7 +31,7 @@ downscaleTrace(
 
 \item{latLim}{TBW}
 
-\item{hist.trace}{TBW}
+\item{hist_trace}{TBW}
 
 \item{mod_data}{TBW}
 
@@ -39,7 +39,7 @@ downscaleTrace(
 
 \item{selection_vars}{TBW}
 
-\item{global.nc.attributes}{TBW}
+\item{global_nc_attributes}{TBW}
 }
 \value{
 TBW

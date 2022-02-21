@@ -11,7 +11,8 @@ loadTraceGrids(
   latLim = c(25, 50),
   dictionary = system.file("extdata", "TraCE21ka_dictionary.csv", package =
     "TraCE21kaDSR"),
-  selection_vars = TraCE21kaDSR:::trace.final.var.names,
+  selection_vars = c("tas", "tasmax", "tasmin", "hurs@992.5561", "ps", "pr", "cld",
+    "wss"),
   compute_wss = TRUE
 )
 }

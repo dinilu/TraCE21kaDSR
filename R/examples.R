@@ -2,8 +2,6 @@
 # cmip5.lon <- c(-11.25, 12.50)
 # cmip5.lat <- c(27, 45)
 # 
-# new.trace.file.names <- mapply(FUN=function(x, y, z, w){paste0("../../Data/Trace21ka/", w, "/trace.", x, ".", y, ".cam2.h0.", w, ".", z, ".nc")}, 'trace.years.n', 'trace.years.bp', 'trace.years.nums', MoreArgs = list(w='trace.vars'), SIMPLIFY = FALSE)
-# 
 # cmip5.spatial.pars <- list(which.combine = 'cmip5.new.vars',
 #                            v.exp = .7,
 #                            rot = FALSE)
@@ -23,14 +21,13 @@
 # 
 # family.link <- "gaussian"
 # 
-# spatial.pars <- list(which.combine = TraCE21kaDSR:::trace.final.var.names,
-#                      v.exp = .7,
-#                      rot = FALSE)
-# 
+# spatial.pars <- list(which.combine = c("tas", "tasmax", "tasmin", "hurs@992.5561", "ps", "pr", "cld", "wss"),
+                     # v.exp = .7,
+                     # rot = FALSE)
 # hist.trace = loadHistoricalTraceGrids(traceFileNames("../Data/TraCE21ka/"))
-# 
+
 # uerra = loadUerra("../Data/UERRA/UERRA-HARMONIE/2m_temperature/latlon/1961-90_2m_temperature.nc", "tas")
-# 
+
 # require(downscaleR)
 # data = prepareData(hist.trace, uerra, spatial.predictors = spatial.pars)
 # 
@@ -39,3 +36,5 @@
 # global.nc.attributes = list("author" = "Diego Nieto Lugilde & Daniel Romera Romera", "institution" = "Universidad de Cordoba", "email" = "bv2nilud@uco.es")
 # 
 # downscaleTrace(1, "../Output/Trace21ka/", "../Data/TraCE21ka/", hist.trace = hist.trace, mod_data = data, model = model, global.nc.attributes = global.nc.attributes)
+# 
+# lapply(1:36, FUN=downscaleTrace, outdir="../Output/TraCE21ka/", trace_dir="../Data/TraCE21ka/", hist_trace=hist.trace, mod_data=data, model=model, global_nc_attributes=global.nc.attributes)
