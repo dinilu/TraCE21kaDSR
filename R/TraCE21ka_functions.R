@@ -122,6 +122,11 @@ loadHistoricalTraceGrids <- function(files, vars = NULL, lonLim=c(-25, 25), latL
 #' #            "Data/TraCE21ka/TS/trace.01.22000-20001BP.cam2.h0.TS.0000101-0200012.nc",
 #' #            "tas", 1, lonLim = NULL, latLim=NULL) 
 loadTraceGrid <- function(file, var, lonLim = c(-25, 25), latLim = c(25, 50), dictionary=system.file("extdata", "TraCE21ka_dictionary.csv", package = "TraCE21kaDSR")){ 
+  # file <- "../Data/TraCE21ka/TS/trace.01.22000-20001BP.cam2.h0.TS.0000101-0200012.nc"
+  # var <- "tas"
+  # lonLim <- c(-25, 25)
+  # latLim <- c(25, 50)
+  # dictionary <- system.file("extdata", "TraCE21ka_dictionary.csv", package = "TraCE21kaDSR")
   
   file.number <- as.numeric(substr(sub(".*trace.", "", file), 1,2))
   
@@ -190,8 +195,12 @@ loadTraceGrid <- function(file, var, lonLim = c(-25, 25), latLim = c(25, 50), di
     n.years <- length(trace.y1:trace.y2)
   }  
   trace.c4r[[4]] <- list() 
-  trace.c4r[[4]]$start <- paste(.DateSeq("4000-01-01", paste0(3999+n.years, "-12-31"), 12, 0), "00:00:00 GMT", sep = " ")
-  trace.c4r[[4]]$end <- paste(.DateSeq("4000-01-01", paste0(3999+n.years, "-12-31"), 12, 1), "00:00:00 GMT", sep = " ")
+  # trace.c4r[[4]]$start <- paste(.DateSeq("4000-01-01", paste0(3999+n.years, "-12-31"), 12, 0), "00:00:00 GMT", sep = " ")
+  # trace.c4r[[4]]$end <- paste(.DateSeq("4000-01-01", paste0(3999+n.years, "-12-31"), 12, 1), "00:00:00 GMT", sep = " ")
+  y1 <- lubridate::ymd("1950-01-01") - lubridate::years(trace.y1)
+  y2 <- lubridate::ymd("1950-01-01") - lubridate::years(trace.y2)
+  trace.c4r[[4]]$start <- y1 %m+% months(x = seq.int(from = 0, to = (n.years * 12) - 1, by = 1)) %>% format("%Y-%m-%d %H:%M:%S %Z")
+  trace.c4r[[4]]$end <- (y1 + days(30)) %m+% months(x = seq.int(from = 0, to = (n.years * 12) - 1, by = 1)) %>% format("%Y-%m-%d %H:%M:%S %Z")
   attr(trace.c4r[[4]], "subset") <- "subsetYears"
   attr(trace.c4r[[4]], "season") <- 1:12 
   
