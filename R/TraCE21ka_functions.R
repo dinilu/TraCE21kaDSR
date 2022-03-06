@@ -195,12 +195,12 @@ loadTraceGrid <- function(file, var, lonLim = c(-25, 25), latLim = c(25, 50), di
     n.years <- length(trace.y1:trace.y2)
   }  
   trace.c4r[[4]] <- list() 
-  # trace.c4r[[4]]$start <- paste(.DateSeq("4000-01-01", paste0(3999+n.years, "-12-31"), 12, 0), "00:00:00 GMT", sep = " ")
-  # trace.c4r[[4]]$end <- paste(.DateSeq("4000-01-01", paste0(3999+n.years, "-12-31"), 12, 1), "00:00:00 GMT", sep = " ")
-  y1 <- lubridate::ymd("1950-01-01") - lubridate::years(trace.y1)
-  y2 <- lubridate::ymd("1950-01-01") - lubridate::years(trace.y2)
-  trace.c4r[[4]]$start <- y1 %m+% months(x = seq.int(from = 0, to = (n.years * 12) - 1, by = 1)) %>% format("%Y-%m-%d %H:%M:%S %Z")
-  trace.c4r[[4]]$end <- (y1 + days(30)) %m+% months(x = seq.int(from = 0, to = (n.years * 12) - 1, by = 1)) %>% format("%Y-%m-%d %H:%M:%S %Z")
+  trace.c4r[[4]]$start <- paste(.DateSeq("4000-01-01", paste0(3999+n.years, "-12-31"), 12, 0), "00:00:00 GMT", sep = " ")
+  trace.c4r[[4]]$end <- paste(.DateSeq("4000-01-01", paste0(3999+n.years, "-12-31"), 12, 1), "00:00:00 GMT", sep = " ")
+  # y1 <- lubridate::ymd("1950-01-01") - lubridate::years(trace.y1)
+  # y2 <- lubridate::ymd("1950-01-01") - lubridate::years(trace.y2)
+  # trace.c4r[[4]]$start <- format(add_with_rollback(y1, months(x = seq.int(from = 0, to = (n.years * 12) - 1, by = 1))), "%Y-%m-%d %H:%M:%S %Z")
+  # trace.c4r[[4]]$end <- format(add_with_rollback(y1 + days(30), months(x = seq.int(from = 0, to = (n.years * 12) - 1, by = 1))), "%Y-%m-%d %H:%M:%S %Z")
   attr(trace.c4r[[4]], "subset") <- "subsetYears"
   attr(trace.c4r[[4]], "season") <- 1:12 
   
