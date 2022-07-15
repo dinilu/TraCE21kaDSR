@@ -27,3 +27,10 @@ Suggests:
     rmarkdown,
     knitr
 VignetteBuilder: knitr
+Remotes: SantanderMetGroup/loadeR,
+    SantanderMetGroup/climate4R.UDG,
+    SantanderMetGroup/downscaleR,
+    SantanderMetGroup/loadeR.2nc,
+    SantanderMetGroup/loadeR.java,
+    SantanderMetGroup/transformeR
+
