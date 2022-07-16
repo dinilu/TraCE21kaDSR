@@ -464,9 +464,10 @@ cdo mergetime ${ps_files[@]} ../../Data/UERRA/UERRA-HARMONIE/surface_pressure/la
 rm ${tmin_files[@]} ${tmax_files[@]} ${tmean_files[@]} ${prec_files[@]} ${cloud_files[@]} ${rhum_files[@]} ${wspeed_files[@]} ${ps_files} 
 ```
 
-Before importing the data in an R session, we need to define a dictionary to standardize units of variables to the `climate4R` vocabulary (check `climate4R.UDG::C4R.vocabulary()`).
 
-<!-- `climate4R.UDG::C4R.vocabulary()` -->
+## Create dictionary
+
+In order to load those files in R, the `climate4R` framework allow to create a dictionary that is used to standardize variables to the `climate4R` vocabulary (check `climate4R.UDG::C4R.vocabulary()`).
 
 ```{r create_uerra_dictionary, eval = FALSE}
 file.create("../../Data/UERRA/UERRA_dictionary.dic")
