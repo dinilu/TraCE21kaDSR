@@ -20,7 +20,11 @@ Trace-21ka paleoclimate data can be downloaded from [https://www.earthsystemgrid
 
 We opted to download files for all time periods (since 22.000 years BP to 1990 CE) for 'surface temperature (radiative)' (TS), 'maximum surface temperature over output period' (TSMX), 'minimum surface temperature over output period' (TSMN), 'solar insolation' (SOLIN), 'surface pressure' (PS), 'convective precipitation rate (liq + ice)' (PRECC), 'surface latent heat flux' (LHFLX), and 'vertically-integrated total cloud' (CLDTOT).
 
-## Inspect files and variables {.tabset}   
+
+## Inspect files and variables {.tabset .tabset-pills}   
+
+Downloaded files can be inspected with the following code:
+
 
 ### TSMX
 
@@ -29,12 +33,14 @@ di.trace <- loadeR::dataInventory("../../Data/TraCE21ka/TSMX/trace.36.400BP-1990
 str(di.trace)
 ```
 
+
 ### TSMN
 
 ```{r explore_tsmn, eval = FALSE} 
 di.trace <- loadeR::dataInventory("../../Data/Trace21ka/TSMN/trace.36.400BP-1990CE.cam2.h0.TSMN.2160101-2204012.nc")
 str(di.trace)
 ```
+
 
 ### TS
 
@@ -51,12 +57,17 @@ di.trace <- loadeR::dataInventory("../../Data/Trace21ka/PRECC/trace.36.400BP-199
 str(di.trace)
 ```
 
+
 ### RELHUM
 
+The file for relative humidity in TraCE21ka have information for different atmospheric levels. In this case, we first selected surface preasure level and then create a new file with the information to simplify the rest of computation.
+
 ```{bash extract_relhum_surface_level, eval=FALSE}
+# BASH script 
 cdo sellevel,992.5561 ../../Data/Trace21ka/RELHUM/trace.36.400BP-1990CE.cam2.h0.RELHUM.2160101-2204012.nc ../../Data/Trace21ka/RELHUM/surface_level/trace.36.400BP-1990CE.cam2.h0.RELHUM.2160101-2204012.nc
 ```
 
+Once, the surface pressure level was selected the new file was inspected.
 
 ```{r explore_relhum, eval = FALSE}
 di.trace <- loadeR::dataInventory("../../Data/Trace21ka/RELHUM/surface_level/trace.36.400BP-1990CE.cam2.h0.RELHUM.2160101-2204012.nc")
@@ -71,6 +82,7 @@ di.trace <- loadeR::dataInventory("../../Data/Trace21ka/CLDTOT/trace.36.400BP-19
 str(di.trace)
 ```
 
+
 ### PS
 
 ```{r explore_ps, eval = FALSE}
@@ -78,12 +90,14 @@ di.trace <- loadeR::dataInventory("../../Data/Trace21ka/PS/trace.36.400BP-1990CE
 str(di.trace)
 ```
 
+
 ### U
 
 ```{r explore_u, eval = FALSE}
 di.trace <- loadeR::dataInventory("../../Data/Trace21ka/U/trace.36.400BP-1990CE.cam2.h0.U.2160101-2204012.nc")
 str(di.trace)
 ```
+
 
 ### V
 
@@ -99,8 +113,19 @@ In order to load those files in R, the `climate4R` framework allow to create a d
 
 ```{r create_trace_dictionary, eval = FALSE} 
 file.create("../../Data/Trace21ka/dictionary.dic")
-writeLines(c("identifier,short_name,time_step,lower_time_bound,upper_time_bound,cell_method,offset,scale,deaccum,derived,interface", "tasmax,TSMX,1mo,0,12,max,-273.15,1,0,0,", "tasmin,TSMN,1mo,0,12,min,-273.15,1,0,0,", "tas,TS,1mo,0,12,mean,-273.15,1,0,0,", "pr,PRECC,1mo,0,12,mean,0,2592000000,0,0,", "hurs,RELHUM,1mo,0,12,mean,0,1,0,0,", "cld,CLDTOT,1mo,0,12,mean,0,1,0,0,", "ps,PS,1mo,0,12,mean,0,1,0,0,", "u,U,1mo,0,12,mean,0,1,0,0,", "v,V,1mo,0,12,mean,0,1,0,0,"), "../../Data/Trace21ka/dictionary.dic")
+writeLines(c("identifier,short_name,time_step,lower_time_bound,upper_time_bound,cell_method,offset,scale,deaccum,derived,interface",
+             "tasmax,TSMX,1mo,0,12,max,-273.15,1,0,0,",
+             "tasmin,TSMN,1mo,0,12,min,-273.15,1,0,0,",
+             "tas,TS,1mo,0,12,mean,-273.15,1,0,0,",
+             "pr,PRECC,1mo,0,12,mean,0,2592000000,0,0,",
+             "hurs,RELHUM,1mo,0,12,mean,0,1,0,0,",
+             "cld,CLDTOT,1mo,0,12,mean,0,1,0,0,",
+             "ps,PS,1mo,0,12,mean,0,1,0,0,",
+             "u,U,1mo,0,12,mean,0,1,0,0,",
+             "v,V,1mo,0,12,mean,0,1,0,0,"),
+           "../../Data/Trace21ka/dictionary.dic")
 ```
+
 
 # UERRA historical reanalisis data
 
@@ -112,11 +137,14 @@ The project provide reanalysis from two different systems (UERRA-HARMONIE and ME
 
 > Data format: Data were downloaded in GRIB format because the Climate Data Operator library (cdo) seems to behave better with GRIB than with NetCDF files.
 
+
 ## Downloading files from dataserver {.tabset}
+
 
 ### Temperature
 
 ```{python Download_UERRA-HARMONIE_2m_temperature, eval=FALSE}
+# Python script 
 import cdsapi
 
 c = cdsapi.Client()
@@ -160,9 +188,11 @@ for y in range(1961, 1990):
 		    'UERRA-HARMONIE/'+ str(y) +'_2m_temperature.grib')
 ```
 
+
 ### Precipitation
 
 ```{python Download_MESCAN-SURFEX_total_precipitation, eval=FALSE}
+# Python script 
 import cdsapi
 
 c = cdsapi.Client()
@@ -205,9 +235,11 @@ for y in range(1961, 1990):
 	'MESCAN-SURFEX/'+ str(y) +'_total_precipitation.grib')
 ```
 
+
 ### Relative humidity
 
 ```{python Download_UERRA-HARMONIE_2m_relative_humidity, eval=FALSE}
+# Python script 
 import cdsapi
 
 c = cdsapi.Client()
@@ -251,9 +283,11 @@ for y in range(1961, 1990):
 		    'UERRA-HARMONIE/2m_relative_humidity/'+ str(y) +'_2m_relative_humidity.grib')
 ```
 
+
 ### Wind speed
 
 ```{python Download_UERRA-HARMONIE_10m_wind_speed, eval=FALSE}
+# Python script 
 import cdsapi
 
 c = cdsapi.Client()
@@ -297,9 +331,11 @@ for y in range(1961, 1990):
 		    'UERRA-HARMONIE/10m_wind_speed/'+ str(y) +'_10m_wind_speed.grib')
 ```
 
+
 ### Total cloud cover
 
 ```{python Download_UERRA-HARMONIE_total_cloud_cover, eval=FALSE}
+# Python script 
 import cdsapi
 
 c = cdsapi.Client()
@@ -347,6 +383,7 @@ for y in range(1961, 1990):
 ### Surface pressure
 
 ```{python Download_UERRA-HARMONIE_surface_pressure, eval=FALSE}
+# Python script 
 import cdsapi
 
 c = cdsapi.Client()
@@ -399,6 +436,7 @@ While we were interested in downscaling at the spatial resolution of the UERRA-H
 Subdaily data from the original files were aggregated to daily and then to monthly data using the Climate Data Operator library (cdo). All variables were kept in their original metric and units, but temperature that was used to calculate maximum, minimum and average daily temperatures. In the case of precipitations, the aggregation was carried out by suming daily data, for the rest of variables aggregation was carried out by averaging subdaily and daily data.
 
 ```{bash aggregate_climate_data, eval=FALSE} 
+# BASH script 
 years=($(seq 1961 1990))
 
 for y in "${years[@]}"
@@ -472,6 +510,15 @@ In order to load those files in R, the `climate4R` framework allow to create a d
 ```{r create_uerra_dictionary, eval = FALSE}
 file.create("../../Data/UERRA/UERRA_dictionary.dic")
 
-writeLines(c("identifier,short_name,time_step,lower_time_bound,upper_time_bound,cell_method,offset,scale,deaccum,derived,interface", "tasmin,2t,1mo,1,12,min,-273.15,1,0,0,", "tasmax,2t,1mo,1,12,max,-273.15,1,0,0,", "tas,2t,1mo,1,12,mean,-273.15,1,0,0,", "pr,tp,1mo,1,12,sum,0,1,0,0,", "hurs,2r,1mo,1,12,mean,0,1,0,0,", "cld,tcc,1mo,1,12,mean,0,1,0,0,", "wss,10si,1mo,1,12,mean,0,1,0,0,", "ps,sp,1mo,1,12,mean,0,1,0,0,"), "../../Data/UERRA/UERRA_dictionary.dic")
+writeLines(c("identifier,short_name,time_step,lower_time_bound,upper_time_bound,cell_method,offset,scale,deaccum,derived,interface", 
+             "tasmin,2t,1mo,1,12,min,-273.15,1,0,0,",
+             "tasmax,2t,1mo,1,12,max,-273.15,1,0,0,",
+             "tas,2t,1mo,1,12,mean,-273.15,1,0,0,",
+             "pr,tp,1mo,1,12,sum,0,1,0,0,",
+             "hurs,2r,1mo,1,12,mean,0,1,0,0,",
+             "cld,tcc,1mo,1,12,mean,0,1,0,0,",
+             "wss,10si,1mo,1,12,mean,0,1,0,0,",
+             "ps,sp,1mo,1,12,mean,0,1,0,0,"),
+           "../../Data/UERRA/UERRA_dictionary.dic")
 ```
 
