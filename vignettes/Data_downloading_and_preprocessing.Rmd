@@ -1,8 +1,8 @@
 ---
-title: "01. Data downloading and preprocessing"
+title: "1. Data downloading and preprocessing"
 output: rmarkdown::html_vignette
 vignette: >
-  %\VignetteIndexEntry{01. Data downloading and preprocessing}
+  %\VignetteIndexEntry{1. Data downloading and preprocessing}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
 ---
