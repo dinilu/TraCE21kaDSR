@@ -21,7 +21,7 @@ Trace-21ka paleoclimate data can be downloaded from [https://www.earthsystemgrid
 We opted to download files for all time periods (since 22.000 years BP to 1990 CE) for 'surface temperature (radiative)' (TS), 'maximum surface temperature over output period' (TSMX), 'minimum surface temperature over output period' (TSMN), 'solar insolation' (SOLIN), 'surface pressure' (PS), 'convective precipitation rate (liq + ice)' (PRECC), 'surface latent heat flux' (LHFLX), and 'vertically-integrated total cloud' (CLDTOT).
 
 
-## Inspect files and variables {.tabset .tabset-pills}   
+## Inspect files and variables {.tabset}   
 
 Downloaded files can be inspected with the following code:
 
