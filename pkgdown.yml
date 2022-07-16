@@ -1,0 +1,11 @@
+pandoc: 2.7.3
+pkgdown: 2.0.5
+pkgdown_sha: ~
+articles:
+  Data_downloading_and_preprocessing: Data_downloading_and_preprocessing.html
+  package_intro: package_intro.html
+last_built: 2022-07-16T09:57Z
+urls:
+  reference: http://dnietolugilde.com/TraCE21kaDSR/reference
+  article: http://dnietolugilde.com/TraCE21kaDSR/articles
+
